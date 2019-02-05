@@ -19,12 +19,9 @@ from utils import progress_bar
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
 parser.add_argument(
-    '--resume',
-    '-r',
-    action='store_true',
-    help='resume from checkpoint',
-    type=bool,
-    default=True)
+    '--num_epochs', default=200, type=int, help='Epochs to train for')
+parser.add_argument(
+    '--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -140,6 +137,6 @@ def test(epoch):
 
 
 def train_test():
-  for epoch in range(start_epoch, start_epoch + 200):
+  for epoch in range(start_epoch, start_epoch + args.num_epochs):
     train(epoch)
     test(epoch)
