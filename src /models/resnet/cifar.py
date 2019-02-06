@@ -19,6 +19,7 @@ from utils import progress_bar
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+parser.add_argument('--num_epochs', default=200, type=int, help='Number of training epochs')
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
 
@@ -133,7 +134,7 @@ def test(epoch, testloader, net, criterion, optimizer):
 def train_test():
     net, criterion, optimizer = create_model()
     trainloader, testloader = get_data()
-    for epoch in range(start_epoch, start_epoch+200):
+    for epoch in range(start_epoch, start_epoch+args.num_epochs):
         train(epoch, trainloader, net, criterion, optimizer)
         test(epoch, testloader, net, criterion, optimizer)
     
