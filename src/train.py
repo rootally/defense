@@ -20,7 +20,7 @@ from load_data import get_data
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-#parser.add_argument('--num_epochs', default=100, type=int, help='Number of training epochs')
+parser.add_argument('--num_epochs', default=100, type=int, help='Number of training epochs')
 parser.add_argument('--steps', default =0, type=int, help='No of steps in an epoch') 
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
@@ -107,7 +107,7 @@ def test(steps ,testloader, net, criterion, optimizer):
         state = {
             'net': net.state_dict(),
             'acc': acc,
-            'epoch': epoch,
+            'step': step,
         }
         if not os.path.isdir('checkpoint'):
             os.mkdir('checkpoint')
@@ -123,8 +123,9 @@ if __name__ == "__main__":
             train(step, trainloader, net, criterion, optimizer)
             test(step, testloader, net, criterion, optimizer)
     else:
-        steps = (args.num_epochs * 50000) / 128
-        for step in range(args.steps):
+        print("in else")
+        steps = (int)((args.num_epochs * 50000) / 128)
+        for step in range(steps):
             train(step, trainloader, net, criterion, optimizer)
             test(step, testloader, net, criterion, optimizer)
 
