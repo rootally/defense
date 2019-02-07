@@ -123,7 +123,6 @@ if __name__ == "__main__":
             train(step, trainloader, net, criterion, optimizer)
             test(step, testloader, net, criterion, optimizer)
     else:
-        print("in else")
         steps = (int)((args.num_epochs * 50000) / 128)
         for step in range(steps):
             train(step, trainloader, net, criterion, optimizer)
