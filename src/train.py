@@ -20,7 +20,7 @@ from load_data import get_data
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-#parser.add_argument('--num_epochs', default=100, type=int, help='Number of training epochs')
+parser.add_argument('--num_epochs', default=100, type=int, help='Number of training epochs')
 parser.add_argument('--steps', default =0, type=int, help='No of steps in an epoch') 
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
