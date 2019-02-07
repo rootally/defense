@@ -13,14 +13,14 @@ import torchvision.transforms as transforms
 import os
 import argparse
 
-from models.resnet import ResNet18 
+from resnet import ResNet18 
 from utils import progress_bar
 from load_data import get_data
 
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
 parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--num_epochs', default=200, type=int, help='Number of training epochs')
+#parser.add_argument('--num_epochs', default=100, type=int, help='Number of training epochs')
 parser.add_argument('--steps', default =0, type=int, help='No of steps in an epoch') 
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
@@ -55,16 +55,13 @@ def create_model():
     return net, criterion, optimizer 
 
 # Training
-def train(epoch, trainloader, net, criterion, optimizer, steps):
-    print('\nEpoch: %d' % epoch)
+def train(steps, trainloader, net, criterion, optimizer):
+    print('\nStep: %d' % steps)
     net.train()
     train_loss = 0
     correct = 0
     total = 0
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-        if steps!=0:
-            if batch_idx > steps:
-                break
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
         outputs = net(inputs)
@@ -80,7 +77,7 @@ def train(epoch, trainloader, net, criterion, optimizer, steps):
         progress_bar(batch_idx, len(trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
             % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-def test(epoch, testloader, net, criterion, optimizer, steps):
+def test(steps ,testloader, net, criterion, optimizer):
     global best_acc
     net.eval()
     test_loss = 0
@@ -121,7 +118,15 @@ def test(epoch, testloader, net, criterion, optimizer, steps):
 if __name__ == "__main__":
     net, criterion, optimizer = create_model()
     trainloader, testloader = get_data()
-    for epoch in range(start_epoch, start_epoch+args.num_epochs):
-        train(epoch, trainloader, net, criterion, optimizer, args.steps)
-        test(epoch, testloader, net, criterion, optimizer, args.steps)
+    if args.steps !=0 :
+        for step in range(args.steps):
+            train(step, trainloader, net, criterion, optimizer)
+            test(step, testloader, net, criterion, optimizer)
+    else:
+        steps = (args.num_epochs * 50000) / 128
+        for step in range(args.steps):
+            train(step, trainloader, net, criterion, optimizer)
+            test(step, testloader, net, criterion, optimizer)
+
+
     
