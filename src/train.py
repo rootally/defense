@@ -61,12 +61,12 @@ def train(steps, trainloader, net, criterion, optimizer):
     train_loss = 0
     correct = 0
     total = 0
-    n_steps = 1
+    n_epochs = 1
     batch_idx = 0
     iterator = iter(trainloader)
     for batch_idx in range(steps):
-        if n_steps*batch_idx == len(trainloader):
-            n_steps = n_steps + 1
+        if batch_idx == n_epochs * len(trainloader):
+            n_epochs = n_epochs + 1
             iterator = iter(trainloader)
         inputs, targets = iterator.next()
         inputs, targets = inputs.to(device), targets.to(device)
@@ -89,12 +89,12 @@ def test(steps ,testloader, net, criterion, optimizer):
     test_loss = 0
     correct = 0
     total = 0
-    n_steps = 1
+    n_epochs = 1
     with torch.no_grad():
         iterator = iter(trainloader)
         for batch_idx in range(steps):
-            if n_steps*batch_idx == len(trainloader):
-                n_steps = n_steps + 1
+            if batch_idx == n_epochs * len(trainloader):
+                n_epochs = n_epochs + 1
                 iterator = iter(trainloader)
             inputs, targets = iterator.next()
             inputs, targets = inputs.to(device), targets.to(device)
