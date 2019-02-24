@@ -29,6 +29,8 @@ def t_dropout(weights, p, d):
     """
     mu, sigma = 0, 0.1  #mean and standard deviation of normal distribution
     num_dropped = (int) (p* weights.shape[0])
+    
+    size = weights.size()                           #return a tuple
     output_channels = weights.shape[0]
     weights = torch.reshape(weights, (-1, output_channels))     #reshape weight matrix into (-1, number of output channels)
     
@@ -45,7 +47,9 @@ def t_dropout(weights, p, d):
 
     and_mask = mask*dropout_mask      #logical AND targeted mask and dropout mask
     final_mask = ones_matrix - and_mask                 # (1 - p*d) 
-    masked_weights = final_mask * sorted_weights 
+    masked_weights = final_mask * sorted_weights
+    
+    masked_weights = torch.reshape(masked_weights, size)
 
     return masked_weights
         
