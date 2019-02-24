@@ -10,11 +10,10 @@ import numpy as np
 from train import create_model 
 from scipy.stats import truncnorm
 
-def get_truncated_normal(mean=0, sd=1, low=0, upp=1):   #truncated normal distribution 
-    return truncnorm(                                   #upper bound of the random variable 
-        (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
+#Make sure cuda is used 
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-def t_dropout(input, p, d):
+def t_dropout(weights, p, d):
     """function to implement T-D
     args - input (tensor) 
     input containing output of some layer in the neural network 
@@ -29,29 +28,23 @@ def t_dropout(input, p, d):
     with dropout probability d.
     """
     mu, sigma = 0, 0.1  #mean and standard deviation of normal distribution
-    weights = np.abs(input.cpu().numpy())   #takes the inputs and convert into numpy array 
     num_dropped = (int) (p* weights.shape[0])
-    mask = np.ones_like(weights)  
-    dropout_mask = np.ones_like(weights)   
-    ones_matrix = np.ones_like(weights) 
-    sorted_weights = np.sort(weights, axis =1)  #sort the weights along the column  
+    mask = torch.ones_like(weights, deivce = device, requires_grad = False)  
+    dropout_mask = torch.empty_like(weights, device = device, requires_grad = False).uniform(0, 1)
+    ones_matrix = torch.ones_like(weights, device = device, requires_grad=False) 
+
+    sorted_weights, indices = torch.sort(weights, dim =1, descending=True)  #sort the weights along the column  
 
     for i in range(weights.shape[0]):         #loop through each row 
         mask[i, :num_dropped] = 0            #make the mask value of required values 0
     
-    for i in range(weights.shape[0]):         #generate dropout mask 
-        for j in range(weights.shape[1]):
-            prob = get_truncated_normal() 
-            if (prob.rvs(1) < d):
-                dropout_mask[i][j] = 1
-            else:
-                dropout_mask[i][j] = 0
+    dropout_mask = torch.bernoulli(dropout_mask) #generated dropout mask from bernoulli distribution
 
     and_mask = mask*dropout_mask      #logical AND targeted mask and dropout mask
     final_mask = ones_matrix - and_mask                 # (1 - p*d) 
     masked_weights = final_mask * sorted_weights 
 
-    return torch.from_numpy(masked_weights).cuda()
+    return masked_weights
         
         
         
