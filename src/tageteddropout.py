@@ -29,6 +29,9 @@ def t_dropout(weights, p, d):
     """
     mu, sigma = 0, 0.1  #mean and standard deviation of normal distribution
     num_dropped = (int) (p* weights.shape[0])
+    output_channels = weights.shape[0]
+    weights = torch.reshape(weights, (-1, output_channels))     #reshape weight matrix into (-1, number of output channels)
+    
     mask = torch.ones_like(weights, deivce = device, requires_grad = False)  
     dropout_mask = torch.empty_like(weights, device = device, requires_grad = False).uniform(0, 1)
     ones_matrix = torch.ones_like(weights, device = device, requires_grad=False) 
