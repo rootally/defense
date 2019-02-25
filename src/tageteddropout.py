@@ -33,6 +33,7 @@ def t_dropout(weights, p, d):
     size = weights.size()                           #return a tuple
     output_channels = weights.shape[0]
     weights = torch.reshape(weights, (-1, output_channels))     #reshape weight matrix into (-1, number of output channels)
+    weights = torch.abs(weights)
     
     mask = torch.ones_like(weights, deivce = device, requires_grad = False)  
     dropout_mask = torch.empty_like(weights, device = device, requires_grad = False).uniform(0, 1)
