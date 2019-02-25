@@ -39,7 +39,8 @@ def t_dropout(weights, p, d):
     ones_matrix = torch.ones_like(weights, device = device, requires_grad=False) 
 
     sorted_weights, indices = torch.sort(weights, dim =1, descending=True)  #sort the weights along the column  
-
+    sorted_weights.to(device)
+    
     for i in range(weights.shape[0]):         #loop through each row 
         mask[i, :num_dropped] = 0            #make the mask value of required values 0
     
@@ -47,11 +48,11 @@ def t_dropout(weights, p, d):
 
     and_mask = mask*dropout_mask      #logical AND targeted mask and dropout mask
     final_mask = ones_matrix - and_mask                 # (1 - p*d) 
-    masked_weights = final_mask * sorted_weights
+    masked_weights = (final_mask * (sorted_weights.to(device)))
     
     masked_weights = torch.reshape(masked_weights, size)
 
-    return masked_weights
+    return masked_weights.to(device)
         
         
         
