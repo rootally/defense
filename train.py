@@ -71,7 +71,7 @@ def train(steps, trainloader, net, criterion, optimizer):
         inputs, targets = iterator.next()
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
-        outputs = net(inputs, )
+        outputs = net(inputs)
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -82,7 +82,6 @@ def train(steps, trainloader, net, criterion, optimizer):
 
         progress_bar(batch_idx, steps, 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
             % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
-def targeted():
     
 
 def test(steps ,testloader, net, criterion, optimizer):
