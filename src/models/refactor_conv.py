@@ -1,10 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Created on Sun Mar  3 01:35:08 2019
-
-@author: anisha
-
 Custom made convolution - Conv2d_drop that performs targeted weight dropout before validation.
 The weights of each convolution are passed to the function targeted_weight_dropout with user 
 defined parameters drop_rate and targ_perc. Targeted weight dropout is performed only if the model is 
@@ -18,6 +12,7 @@ import torch.nn.functional as F
 from targeted_dropout import targeted_weight_droput
 from torch._six import container_abcs
 from itertools import repeat
+
 def _ntuple(n):
     def parse(x):
         if isinstance(x, container_abcs.Iterable):
@@ -99,7 +94,7 @@ class Conv2d_drop(_ConvNd):
         if(self.training):
             return F.conv2d(input, self.weight, self.bias, self.stride,self.padding, self.dilation, self.groups)
         else:
-##            print("Before", self.weight.size())
+#            print("Before", self.weight.size())
             self.weight = torch.nn.Parameter(targeted_weight_droput(self.weight, self.drop_rate, self.targ_perc, False))
-##            print("After", self.weight.size())
+#            print("After", self.weight.size())
             return F.conv2d(input, self.weight, self.bias, self.stride,self.padding, self.dilation, self.groups)
