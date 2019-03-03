@@ -9,7 +9,7 @@ import torch
 import math 
 import torch.nn as nn
 import torch.nn.functional as F
-from targeted_dropout import targeted_weight_droput
+from models.targeted_dropout import targeted_weight_droput
 from torch._six import container_abcs
 from itertools import repeat
 

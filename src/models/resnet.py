@@ -5,7 +5,7 @@ targeted weight dropout before validation """
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from refactor_conv import Conv2d_drop 
+from models.refactor_conv import Conv2d_drop 
 
 class BasicBlock(nn.Module):
     expansion = 1
