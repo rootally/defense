@@ -7,11 +7,12 @@ import os
 import sys
 import time
 import math
-
+import torch
+from models.targeted_dropout import targeted_weight_droput
 import torch.nn as nn
 import torch.nn.init as init
 
-
+#
 def get_mean_and_std(dataset):
     '''Compute the mean and std value of dataset.'''
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True, num_workers=2)
@@ -42,8 +43,8 @@ def init_params(net):
                 init.constant(m.bias, 0)
 
 
-_, term_width = os.popen('stty size', 'r').read().split()
-term_width = int(term_width)
+#_, term_width = os.popen('stty size', 'r').read().split()
+#term_width = int(term_width)
 
 TOTAL_BAR_LENGTH = 65.
 last_time = time.time()
@@ -122,3 +123,7 @@ def format_time(seconds):
     if f == '':
         f = '0ms'
     return f
+def conv(weight, flag, drop_rate, targ_perc):
+        if(flag == 1):
+            weight = torch.nn.Parameter(targeted_weight_droput(weight, drop_rate, targ_perc, False))
+        return weight
