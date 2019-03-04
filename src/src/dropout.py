@@ -10,11 +10,11 @@ def targeted_weight_dropout(w, params, is_training):
     drop_rate = params.drop_rate
     targ_perc = params.targ_rate
     w_shape = list(w.size())
-    w = w.view(-1,w_shape[0])
+    w = w.view(w_shape[0], -1)
     norm = torch.abs(w)
-    idx = int(targ_perc * w_shape[1])
+    idx = int(targ_perc * w.shape[0])
     threshold = (torch.sort(norm, dim=0)[0])[idx]
-    mask = norm < (threshold[0])
+    mask = norm < (threshold[None, :])
 
     if not is_training:
         #Inference
@@ -25,15 +25,15 @@ def targeted_weight_dropout(w, params, is_training):
     mask = (torch.empty(list(w.size())).uniform_(0,1) < drop_rate) & mask
     mask = mask.float()
     w = (1. - mask) * w
-    w = w.view(w, w_shape)
+    w = w.view(w_shape)
     return w
 
 def targeted_unit_dropout(w, params, is_training):
     drop_rate = params.drop_rate
     targ_perc = params.targ_rate
-    w_shape = list(w.size())
 
-    w = w.view(-1, w_shape[0])
+    w_shape = list(w.size())
+    w = w.view(w_shape[0], -1)
     norm = torch.norm(w, dim=0)
     idx = int(targ_perc * int(w.shape[1]))
     sorted_norms = torch.sort(norm)
@@ -46,15 +46,3 @@ def targeted_unit_dropout(w, params, is_training):
     x = (1-mask) * w
     x = x.view(w_shape)
     return x
-
-class params:
-    drop_rate = 0.5
-    targ_rate = 0.5
-
-def main():
-    a = torch.randn(32,6,5,3)
-    parameters = params()
-    _w = targeted_weight_dropout(a, parameters, is_training=True)
-
-if __name__ == "__main__":
-    main()
