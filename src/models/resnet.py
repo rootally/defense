@@ -23,13 +23,9 @@ class BasicBlock(nn.Module):
 
     def forward(self, x, flag , drop_rate , targ_perc ):
         out = F.relu(self.bn1(self.conv1(x)))
-        print("After", self.conv1.weight.size())
         self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
-        print("After", self.conv1.weight.size())
         out = self.bn2(self.conv2(out))
-        print("Before", self.conv2.weight.size())
         self.conv2.weight = conv(self.conv2.weight, flag, drop_rate, targ_perc)
-        print("After", self.conv2.weight.size())
         out += self.shortcut(x)
         out = F.relu(out)
         return out
