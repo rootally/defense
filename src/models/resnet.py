@@ -22,10 +22,10 @@ class BasicBlock(nn.Module):
             )
 
     def forward(self, x, flag , drop_rate , targ_perc ):
-        out = F.relu(self.bn1(self.conv1(x)))
         self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
-        out = self.bn2(self.conv2(out))
+        out = F.relu(self.bn1(self.conv1(x)))
         self.conv2.weight = conv(self.conv2.weight, flag, drop_rate, targ_perc)
+        out = self.bn2(self.conv2(out))
         out += self.shortcut(x)
         out = F.relu(out)
         return out
@@ -51,10 +51,10 @@ class Bottleneck(nn.Module):
             )
 
     def forward(self, x, flag, drop_rate, targ_perc):
-        out = F.relu(self.bn1(self.conv1(x)))
         self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
-        out = F.relu(self.bn2(self.conv2(out)))
+        out = F.relu(self.bn1(self.conv1(x)))
         self.conv2.weight = conv(self.conv2.weight, flag, drop_rate, targ_perc)
+        out = F.relu(self.bn2(self.conv2(out)))
         out = self.bn3(self.conv3(out))
         out += self.shortcut(x)
         out = F.relu(out)
@@ -83,8 +83,8 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, flag = 1, drop_rate = 0.0, targ_perc = 0.0):
-        out = F.relu(self.bn1(self.conv1(x)))
         self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
+        out = F.relu(self.bn1(self.conv1(x)))
         for i in range(len(self.layer1)):
             out = self.layer1[i](out, flag, drop_rate, targ_perc)
         for i in range(len(self.layer2)):
