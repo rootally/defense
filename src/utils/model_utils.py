@@ -8,7 +8,7 @@ import sys
 import time
 import math
 import torch
-from models.targeted_dropout import targeted_weight_droput
+from utils.dropout import targeted_weight_dropout
 import torch.nn as nn
 import torch.nn.init as init
 
@@ -125,5 +125,5 @@ def format_time(seconds):
     return f
 def conv(weight, flag, drop_rate, targ_perc):
         if(flag == 1):
-            weight = torch.nn.Parameter(targeted_weight_droput(weight, drop_rate, targ_perc, False))
+            weight = torch.nn.Parameter(targeted_weight_dropout(weight, drop_rate, targ_perc, False))
         return weight

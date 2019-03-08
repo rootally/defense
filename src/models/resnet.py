@@ -2,7 +2,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils import conv
+#import sys
+#sys.path.insert(0, '/home/anisha/defense/src')
+from utils.model_utils import conv
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -117,7 +119,7 @@ def ResNet152():
 
 def test():
     net = ResNet18()
+    net.eval()
     y = net(torch.randn(1,3,32,32), 1, 1.0, 0.8)
     print(y.size())
 
-# test()
