@@ -2,8 +2,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-#import sys
-#sys.path.insert(0, '/home/anisha/defense/src')
 from utils.model_utils import conv
 
 class BasicBlock(nn.Module):
