@@ -8,7 +8,7 @@ import sys
 import time
 import math
 import torch
-from utils.dropout import targeted_weight_dropout
+from src.utils.dropout import targeted_weight_dropout
 import torch.nn as nn
 import torch.nn.init as init
 

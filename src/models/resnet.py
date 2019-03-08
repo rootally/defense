@@ -2,7 +2,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils.model_utils import conv
+from src.utils.model_utils import conv
 
 class BasicBlock(nn.Module):
     expansion = 1
