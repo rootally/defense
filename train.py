@@ -14,27 +14,28 @@ import os
 import argparse
 
 from src.models.resnet import ResNet18 
-from src.utils.model_utils import progress_bar
+from src.utils.misc_utils import progress_bar
 from src.utils.load_data import get_data
-
+from src.hparams.registry import get_hparams
+from src.models.registry import get_model
 
 parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
-parser.add_argument('--num_epochs', default=100, type=int, help='Number of training epochs')
+parser.add_argument('--hparams', type=str, required=True, help='Hyperparameters string')
 parser.add_argument('--steps', default =0, type=int, help='No of steps in an epoch') 
 parser.add_argument('--resume', '-r', action='store_true', help='resume from checkpoint')
 args = parser.parse_args()
 
+hparams =  get_hparams(args.hparams)
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 best_acc = 0  # best test accuracy
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
-batch_size = 128
 # get the data 
-trainloader, testloader = get_data(batch_size)
+trainloader, testloader = get_data(hparams.batch_size)
 
 """Fucntion to instantiate the resnet model and return it"""
 def create_model():
-    net = ResNet18()
+    net = get_model(hparams.model)
     net = net.to(device)
     if device == 'cuda':
         net = torch.nn.DataParallel(net)
@@ -50,7 +51,7 @@ def create_model():
         start_epoch = checkpoint['epoch']
 
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.SGD(net.parameters(), lr=args.lr, momentum=0.9, weight_decay=5e-4)
+    optimizer = optim.SGD(net.parameters(), lr=hparams.learning_rate, momentum=hparams.momentum, weight_decay=hparams.weight_decay)
 
     return net, criterion, optimizer
 
@@ -71,7 +72,7 @@ def train(steps, trainloader, net, criterion, optimizer):
         inputs, targets = iterator.next()
         inputs, targets = inputs.to(device), targets.to(device)
         optimizer.zero_grad()
-        outputs = net(inputs)
+        outputs = net(inputs, hparams)
         loss = criterion(outputs, targets)
         loss.backward()
         optimizer.step()
@@ -99,7 +100,7 @@ def test(steps ,testloader, net, criterion, optimizer):
                 iterator = iter(trainloader)
             inputs, targets = iterator.next()
             inputs, targets = inputs.to(device), targets.to(device)
-            outputs = net(inputs)
+            outputs = net(inputs, hparams)
             loss = criterion(outputs, targets)
 
             test_loss += loss.item()
@@ -132,6 +133,6 @@ if __name__ == "__main__":
         train(args.steps, trainloader, net, criterion, optimizer)
         test(args.steps, testloader, net, criterion, optimizer)
     else:
-        steps = (int)((args.num_epochs * 50000) / batch_size)        
+        steps = (int)((hparams.num_epochs * 50000) / hparams.batch_size)        
         train(steps, trainloader, net, criterion, optimizer)
         test(steps, testloader, net, criterion, optimizer)

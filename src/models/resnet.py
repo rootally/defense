@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from src.utils.model_utils import conv
+from src.models.registry import register
 
 class BasicBlock(nn.Module):
     expansion = 1
@@ -21,10 +22,10 @@ class BasicBlock(nn.Module):
                 nn.BatchNorm2d(self.expansion*planes)
             )
 
-    def forward(self, x, flag , drop_rate , targ_perc ):
-        self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
+    def forward(self, x, hparams):
+        self.conv1.weight = conv(self.conv1.weight, hparams)
         out = F.relu(self.bn1(self.conv1(x)))
-        self.conv2.weight = conv(self.conv2.weight, flag, drop_rate, targ_perc)
+        self.conv2.weight = conv(self.conv2.weight, hparams)
         out = self.bn2(self.conv2(out))
         out += self.shortcut(x)
         out = F.relu(out)
@@ -50,10 +51,10 @@ class Bottleneck(nn.Module):
                 nn.BatchNorm2d(self.expansion*planes)
             )
 
-    def forward(self, x, flag, drop_rate, targ_perc):
-        self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
+    def forward(self, x, hparams):
+        self.conv1.weight = conv(self.conv1.weight, hparams)
         out = F.relu(self.bn1(self.conv1(x)))
-        self.conv2.weight = conv(self.conv2.weight, flag, drop_rate, targ_perc)
+        self.conv2.weight = conv(self.conv2.weight, hparams)
         out = F.relu(self.bn2(self.conv2(out)))
         out = self.bn3(self.conv3(out))
         out += self.shortcut(x)
@@ -82,35 +83,39 @@ class ResNet(nn.Module):
             self.in_planes = planes * block.expansion
         return nn.Sequential(*layers)
 
-    def forward(self, x, flag = 1, drop_rate = 0.0, targ_perc = 0.0):
-        self.conv1.weight = conv(self.conv1.weight, flag, drop_rate, targ_perc)
+    def forward(self, x, hparams):
+        self.conv1.weight = conv(self.conv1.weight, hparams)
         out = F.relu(self.bn1(self.conv1(x)))
         for i in range(len(self.layer1)):
-            out = self.layer1[i](out, flag, drop_rate, targ_perc)
+            out = self.layer1[i](out, hparams)
         for i in range(len(self.layer2)):
-            out = self.layer2[i](out, flag, drop_rate, targ_perc)
+            out = self.layer2[i](out, hparams)
         for i in range(len(self.layer2)):
-            out = self.layer3[i](out, flag, drop_rate, targ_perc)
+            out = self.layer3[i](out, hparams)
         for i in range(len(self.layer2)):
-            out = self.layer4[i](out, flag, drop_rate, targ_perc)
+            out = self.layer4[i](out, hparams)
         out = F.avg_pool2d(out, 4)
         out = out.view(out.size(0), -1)
         out = self.linear(out)
         return out
 
-
+@register
 def ResNet18():
     return ResNet(BasicBlock, [2,2,2,2])
 
+@register
 def ResNet34():
     return ResNet(BasicBlock, [3,4,6,3])
 
+@register
 def ResNet50():
     return ResNet(Bottleneck, [3,4,6,3])
 
+@register
 def ResNet101():
     return ResNet(Bottleneck, [3,4,23,3])
 
+@register
 def ResNet152():
     return ResNet(Bottleneck, [3,8,36,3])
 
