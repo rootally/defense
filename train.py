@@ -29,7 +29,8 @@ args = parser.parse_args()
 hparams =  get_hparams(args.hparams)
 
 OUTPUT_DIR = 'runs/'+args.hparams if args.output_dir is None else args.output_dir  
-
+if args.output_dir is None and not os.path.isdir('runs'):
+    os.mkdir('runs')
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 start_step = 0  # start from epoch 0 or last checkpoint epoch
 # get the data 
