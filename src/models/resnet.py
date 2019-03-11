@@ -23,9 +23,9 @@ class BasicBlock(nn.Module):
             )
 
     def forward(self, x, hparams):
-        self.conv1.weight = conv(self.conv1.weight, hparams)
+        self.conv1.weight = conv(self.conv1.weight, hparams, self.training)
         out = F.relu(self.bn1(self.conv1(x)))
-        self.conv2.weight = conv(self.conv2.weight, hparams)
+        self.conv2.weight = conv(self.conv2.weight, hparams, self.training)
         out = self.bn2(self.conv2(out))
         out += self.shortcut(x)
         out = F.relu(out)
@@ -52,9 +52,9 @@ class Bottleneck(nn.Module):
             )
 
     def forward(self, x, hparams):
-        self.conv1.weight = conv(self.conv1.weight, hparams)
+        self.conv1.weight = conv(self.conv1.weight, hparams, self.training)
         out = F.relu(self.bn1(self.conv1(x)))
-        self.conv2.weight = conv(self.conv2.weight, hparams)
+        self.conv2.weight = conv(self.conv2.weight, hparams, self.training)
         out = F.relu(self.bn2(self.conv2(out)))
         out = self.bn3(self.conv3(out))
         out += self.shortcut(x)
@@ -84,7 +84,7 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x, hparams):
-        self.conv1.weight = conv(self.conv1.weight, hparams)
+        self.conv1.weight = conv(self.conv1.weight, hparams, self.training)
         out = F.relu(self.bn1(self.conv1(x)))
         for i in range(len(self.layer1)):
             out = self.layer1[i](out, hparams)
