@@ -80,10 +80,12 @@ def train(steps, trainloader, net, criterion, optimizer):
         _, predicted = outputs.max(1)
         total += targets.size(0)
         correct += predicted.eq(targets).sum().item()
-
+        if batch_idx%100 == 0:
+            print("Accuracy: {}".format(correct/total))
+        '''
         progress_bar(batch_idx, steps, 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
             % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
-    
+        '''
 
 def test(steps ,testloader, net, criterion, optimizer):
     global best_acc
