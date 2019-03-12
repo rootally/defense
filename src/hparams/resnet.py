@@ -22,6 +22,7 @@ class HParams():
 @register
 def resnet18_default():
   hps = HParams()
+  
   return hps
 
 @register
