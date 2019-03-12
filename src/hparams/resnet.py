@@ -22,7 +22,6 @@ class HParams():
 @register
 def resnet18_default():
   hps = HParams()
-  
   return hps
 
 @register
@@ -54,6 +53,36 @@ def resnet18_targ_weight_050_drop_050():
   hps.targ_perc = 0.50
 
   return hps  
+
+@register
+def resnet18_targ_unit_075_drop_033():
+  hps = resnet18_default()
+  hps.targeted_unit = True
+  hps.targ_perc = 0.75
+  hps.drop_rate = 0.33
+
+  return hps
+
+@register
+def resnet18_targ_unit_075_drop_050():
+  hps = resnet18_targ_unit_075_drop_033()
+  hps.drop_rate  = 0.5
+
+  return hps
+
+@register
+def resnet18_targ_unit_075_drop_066():
+  hps = resnet18_targ_unit_075_drop_050()
+  hps.drop_rate  = 0.66
+
+  return hps  
+
+@register
+def resnet18_targ_unit_050_drop_050():
+  hps = resnet18_targ_unit_075_drop_050()
+  hps.targ_perc = 0.50
+
+  return hps
 
 @register
 def resnet34_default():
@@ -89,4 +118,34 @@ def resnet34_targ_weight_050_drop_050():
   hps = resnet34_targ_weight_075_drop_050()
   hps.targ_perc = 0.50
 
-  return hps    
+  return hps 
+
+@register
+def resnet34_targ_unit_075_drop_033():
+  hps = resnet34_default()
+  hps.targeted_unit = True
+  hps.targ_perc = 0.75
+  hps.drop_rate = 0.33
+
+  return hps
+
+@register
+def resnet34_targ_unit_075_drop_050():
+  hps = resnet34_targ_unit_075_drop_033()
+  hps.drop_rate  = 0.5
+
+  return hps
+
+@register
+def resnet34_targ_unit_075_drop_066():
+  hps = resnet34_targ_unit_075_drop_050()
+  hps.drop_rate  = 0.66
+
+  return hps  
+
+@register
+def resnet34_targ_unit_050_drop_050():
+  hps = resnet34_targ_unit_075_drop_050()
+  hps.targ_perc = 0.50
+
+  return hps
